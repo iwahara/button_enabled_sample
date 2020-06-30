@@ -1,9 +1,6 @@
 package com.sample.buttonenabled.ui.main
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 
 class MainViewModel : ViewModel() {
 
@@ -11,16 +8,18 @@ class MainViewModel : ViewModel() {
     val password = MutableLiveData<String>("")
     val isSaveMailAddress = MutableLiveData<Boolean>(false)
 
-    val isButtonLoginEnabled = MediatorLiveData<Boolean>()
+    private val _isButtonLoginEnabled = MediatorLiveData<Boolean>()
+
+    val isButtonLoginEnabled: LiveData<Boolean> = _isButtonLoginEnabled
 
     init {
 
         val observer = Observer<String> {
             val mail = this.mailAddress.value ?: ""
             val password = this.password.value ?: ""
-            this.isButtonLoginEnabled.value = mail.isNotEmpty() && password.trim().length >= 6
+            this._isButtonLoginEnabled.value = mail.isNotEmpty() && password.trim().length >= 6
         }
-        isButtonLoginEnabled.addSource(mailAddress, observer)
-        isButtonLoginEnabled.addSource(password, observer)
+        _isButtonLoginEnabled.addSource(mailAddress, observer)
+        _isButtonLoginEnabled.addSource(password, observer)
     }
 }
